@@ -21,3 +21,6 @@ $search_filter = "(&(objectCategory=person)(samaccountname=*))";
 
 // SQL: SELECT [username] FROM _EMPLOYEE (создать лист типа employee и поставить галочку только на username)
 $all_employees_url = '';
+$send_pre_request = true;
+$pre_request_url = "";
+$pre_request_data = "";

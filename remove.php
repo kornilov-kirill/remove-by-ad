@@ -22,7 +22,7 @@ if ($show_config) {
 
 
 function get_all_users() {
-    global $use_ntlm_auth, $ntlm_user, $ntlm_password, $all_employees_url;
+    global $use_ntlm_auth, $ntlm_user, $ntlm_password, $all_employees_url, $send_pre_request, $pre_request_url, $pre_request_data;
 
     $url = $all_employees_url;
     echo PHP_EOL . "<br>" . "get all users url " . $url;
@@ -57,7 +57,29 @@ function get_all_users() {
         $options[CURLOPT_SSL_VERIFYHOST] = false;
         $options[CURLOPT_SSL_VERIFYPEER] = false;
     }
-    curl_setopt_array($ch, $options);
+    if ($send_pre_request) {
+        $options[CURLOPT_URL] = $pre_request_url;
+        $options[CURLOPT_HTTPGET] = false;
+        $options[CURLOPT_POST] = true;
+        $options[CURLOPT_POSTFIELDS] = $pre_request_data;
+        curl_setopt_array($ch, $options);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, __DIR__ . '/cookies.txt');
+        curl_setopt($ch, CURLOPT_COOKIEFILE, __DIR__ . '/cookies.txt');
+        $r = curl_exec($ch);
+        preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $r, $matches);
+        // var_dump($matches);
+        $options[CURLOPT_URL] = $url;
+        $options[CURLOPT_HTTPGET] = true;
+        $options[CURLOPT_POST] = false;
+        $options[CURLOPT_POSTFIELDS] = false;
+        $header[] = "X-Requested-With: XMLHttpRequest";
+        curl_setopt_array($ch, $options);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, __DIR__ . '/cookies.txt');
+        curl_setopt($ch, CURLOPT_COOKIEFILE, __DIR__ . '/cookies.txt');
+    } else {
+        curl_setopt_array($ch, $options);
+    }
 
     $json_response = curl_exec($ch);
 
