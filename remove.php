@@ -185,7 +185,6 @@ function process_info($info) {
 echo PHP_EOL . "<br>" . PHP_EOL . "<br>" . " PROGRAM WAS STARTED" . " <br>" . PHP_EOL;
 
 function_exists('ldap_connect') ? 0 : die('ERROR: LIBRARY LDAP IS NOT CONNECTED');
-function_exists('oci_connect') ? 0 : die('ERROR: LIBRARY OCI IS NOT CONNECTED');
 
 $ds = ldap_connect($ldap_url);
 $ds = $ds ? $ds : die('ERROR: Cannot connect to LDAP');
